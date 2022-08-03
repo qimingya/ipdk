@@ -17,8 +17,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 # Installing dependent packages required for DPDK Build
 RUN apt-get update
 
-RUN apt-get install -y apt-utils \
-    git \
+RUN apt-get install -y git \
     libtool \
     clang \
     gcc \
@@ -86,3 +85,6 @@ COPY ./start_p4ovs.sh /root/start_p4ovs.sh
 COPY ./run_ovs_cmds /root/run_ovs_cmds
 RUN  /root/start_p4ovs.sh /root && \
      /root/scripts/run_cleanup.sh /root ${KEEP_SOURCE_CODE}
+
+RUN apt-get install -y tcpdump
+ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
