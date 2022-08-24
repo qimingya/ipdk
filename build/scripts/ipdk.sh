@@ -150,8 +150,8 @@ build_image() {
 			
 		# add build arguments
 		if [[ "$PROXY" != "" ]] ; then
-			ARGS+=("--build-arg" "HTTP_PROXY=$PROXY")
-			ARGS+=("--build-arg" "HTTPS_PROXY=$PROXY")
+			ARGS+=("--build-arg" "http_proxy=$PROXY")
+			ARGS+=("--build-arg" "https_proxy=$PROXY")
 		fi
 		if $KEEP_SOURCE_CODE ; then
 			ARGS+=("--build-arg" "KEEP_SOURCE_CODE=YES")

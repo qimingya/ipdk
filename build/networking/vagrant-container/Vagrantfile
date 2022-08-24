@@ -11,9 +11,9 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "../../..", "/git/ipdk"
 
   # NOTE: Configure any proxy below.
-  #config.proxy.http     = "http://proxy:911"
-  #config.proxy.https    = "http://proxy:911"
-  #config.proxy.no_proxy = "no_proxy=noproxy.com,.10.0.0.0/8,192.168.0.0/16,localhost,.local,127.0.0.0/8"
+  config.proxy.http     = "http://child-prc.intel.com:913"
+  config.proxy.https    = "http://child-prc.intel.com:913"
+  config.proxy.no_proxy = "no_proxy=noproxy.com,.10.0.0.0/8,192.168.0.0/16,localhost,.local,127.0.0.0/8"
 
   config.vm.provision "shell", path: "provision.sh"
 end
