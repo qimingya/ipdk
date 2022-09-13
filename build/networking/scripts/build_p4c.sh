@@ -31,7 +31,6 @@ echo ""
 
 git clone https://github.com/p4lang/p4c.git --recursive P4C
 cd P4C
-git checkout $P4C_SHA
 mkdir build && cd build
 cmake  ..
 make $NUM_THREADS
