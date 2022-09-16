@@ -49,6 +49,6 @@ then
     get_p4ovs_repo
     build_p4sde
     install_dependencies
-    build_p4c
+#    build_p4c
 fi
 build_p4ovs

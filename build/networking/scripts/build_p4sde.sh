@@ -60,7 +60,7 @@ echo "Compiling p4-driver"
 #TODO: Below link needs to be updated when code is open-sourced
 git clone https://github.com/p4lang/p4-dpdk-target.git p4-driver
 cd p4-driver
-git checkout a038e12a4daa4d0167c1555e0f69696fc46641d9
+git checkout 3344147d9d5dd9e064ac2d98b5088426cc32e191
 git submodule update --init --recursive
 
 pip3 install distro
