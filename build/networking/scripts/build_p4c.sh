@@ -14,7 +14,7 @@ then
 fi
 
 #SHA on top which P4C is validated
-P4C_SHA=45e5d70245ef8ec691d0d758e1c91a087ecdeb45
+P4C_SHA=037a1491b241dfeedced6f68d18c7bc848fff641
 
 WORKDIR=$1
 cd "$WORKDIR"
