@@ -35,11 +35,6 @@ install_dependencies() {
     rm -rf "${WORKDIR}/P4OVS_DEPS_SRC_CODE" || exit 1
 }
 
-build_p4c () {
-    chmod +x ${SCRIPTS_DIR}/build_p4c.sh && \
-        bash ${SCRIPTS_DIR}/build_p4c.sh "$WORKDIR"
-}
-
 build_p4ovs () {
    cd "$WORKDIR"/P4-OVS && bash ./build-p4ovs.sh "$WORKDIR"/p4-sde/install
 }
@@ -49,6 +44,5 @@ then
     get_p4ovs_repo
     build_p4sde
     install_dependencies
-#    build_p4c
 fi
 build_p4ovs

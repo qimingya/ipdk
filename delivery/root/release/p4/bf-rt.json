@@ -1,0 +1,223 @@
+{
+  "schema_version" : "1.0.0",
+  "tables" : [
+    {
+      "name" : "pipe.ingress.push_vxlan_table",
+      "id" : 39780350,
+      "table_type" : "MatchAction_Direct",
+      "size" : 1024,
+      "annotations" : [],
+      "depends_on" : [],
+      "has_const_default_action" : true,
+      "key" : [
+        {
+          "id" : 1,
+          "name" : "ig_intr_md.ingress_port",
+          "repeated" : false,
+          "annotations" : [],
+          "mandatory" : false,
+          "match_type" : "Exact",
+          "type" : {
+            "type" : "bytes",
+            "width" : 32
+          }
+        }
+      ],
+      "action_specs" : [
+        {
+          "id" : 32131245,
+          "name" : "ingress.vxlan_encap",
+          "action_scope" : "TableAndDefault",
+          "annotations" : [],
+          "data" : [
+            {
+              "id" : 1,
+              "name" : "ethernet_dst_addr",
+              "repeated" : false,
+              "mandatory" : true,
+              "read_only" : false,
+              "annotations" : [],
+              "type" : {
+                "type" : "bytes",
+                "width" : 48
+              }
+            },
+            {
+              "id" : 2,
+              "name" : "ethernet_src_addr",
+              "repeated" : false,
+              "mandatory" : true,
+              "read_only" : false,
+              "annotations" : [],
+              "type" : {
+                "type" : "bytes",
+                "width" : 48
+              }
+            },
+            {
+              "id" : 3,
+              "name" : "ipv4_src_addr",
+              "repeated" : false,
+              "mandatory" : true,
+              "read_only" : false,
+              "annotations" : [],
+              "type" : {
+                "type" : "bytes",
+                "width" : 32
+              }
+            },
+            {
+              "id" : 4,
+              "name" : "ipv4_dst_addr",
+              "repeated" : false,
+              "mandatory" : true,
+              "read_only" : false,
+              "annotations" : [],
+              "type" : {
+                "type" : "bytes",
+                "width" : 32
+              }
+            },
+            {
+              "id" : 5,
+              "name" : "vxlan_vni",
+              "repeated" : false,
+              "mandatory" : true,
+              "read_only" : false,
+              "annotations" : [],
+              "type" : {
+                "type" : "bytes",
+                "width" : 24
+              }
+            }
+          ]
+        },
+        {
+          "id" : 21257015,
+          "name" : "NoAction",
+          "action_scope" : "DefaultOnly",
+          "annotations" : [
+            {
+              "name" : "@defaultonly"
+            }
+          ],
+          "data" : []
+        }
+      ],
+      "data" : [],
+      "supported_operations" : [],
+      "attributes" : ["EntryScope"]
+    },
+    {
+      "name" : "pipe.ingress.pop_vxlan_table",
+      "id" : 41098401,
+      "table_type" : "MatchAction_Direct",
+      "size" : 1024,
+      "annotations" : [],
+      "depends_on" : [],
+      "has_const_default_action" : true,
+      "key" : [
+        {
+          "id" : 1,
+          "name" : "hdr.outer_vxlan.vni",
+          "repeated" : false,
+          "annotations" : [],
+          "mandatory" : false,
+          "match_type" : "Exact",
+          "type" : {
+            "type" : "bytes",
+            "width" : 24
+          }
+        }
+      ],
+      "action_specs" : [
+        {
+          "id" : 16954932,
+          "name" : "ingress.vxlan_decap",
+          "action_scope" : "TableAndDefault",
+          "annotations" : [],
+          "data" : [
+            {
+              "id" : 1,
+              "name" : "port_out",
+              "repeated" : false,
+              "mandatory" : true,
+              "read_only" : false,
+              "annotations" : [],
+              "type" : {
+                "type" : "bytes",
+                "width" : 32
+              }
+            }
+          ]
+        },
+        {
+          "id" : 33281717,
+          "name" : "ingress.drop",
+          "action_scope" : "TableAndDefault",
+          "annotations" : [],
+          "data" : []
+        }
+      ],
+      "data" : [],
+      "supported_operations" : [],
+      "attributes" : ["EntryScope"]
+    },
+    {
+      "name" : "pipe.ingress.port_forward_table",
+      "id" : 49783540,
+      "table_type" : "MatchAction_Direct",
+      "size" : 1024,
+      "annotations" : [],
+      "depends_on" : [],
+      "has_const_default_action" : true,
+      "key" : [
+        {
+          "id" : 1,
+          "name" : "ig_intr_md.ingress_port",
+          "repeated" : false,
+          "annotations" : [],
+          "mandatory" : false,
+          "match_type" : "Exact",
+          "type" : {
+            "type" : "bytes",
+            "width" : 32
+          }
+        }
+      ],
+      "action_specs" : [
+        {
+          "id" : 18638031,
+          "name" : "ingress.send",
+          "action_scope" : "TableAndDefault",
+          "annotations" : [],
+          "data" : [
+            {
+              "id" : 1,
+              "name" : "port_out",
+              "repeated" : false,
+              "mandatory" : true,
+              "read_only" : false,
+              "annotations" : [],
+              "type" : {
+                "type" : "bytes",
+                "width" : 32
+              }
+            }
+          ]
+        },
+        {
+          "id" : 33281717,
+          "name" : "ingress.drop",
+          "action_scope" : "TableAndDefault",
+          "annotations" : [],
+          "data" : []
+        }
+      ],
+      "data" : [],
+      "supported_operations" : [],
+      "attributes" : ["EntryScope"]
+    }
+  ],
+  "learn_filters" : []
+}
