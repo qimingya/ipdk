@@ -1,0 +1,121 @@
+#Copyright (C) 2022 Intel Corporation
+#SPDX-License-Identifier: Apache-2.0
+#
+# Version 0.1.0
+
+ARG BASE_IMG=ubuntu:20.04
+FROM ${BASE_IMG}
+LABEL maintainer="neha1.singh@intel.com"
+SHELL ["/bin/bash", "-c"]
+
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+# Installing dependent packages required for DPDK Build
+RUN apt-get update
+
+RUN apt-get install -y git \
+    libtool \
+    clang \
+    gcc \
+    g++ \
+    autoconf \
+    automake \
+    autoconf-archive \
+    libconfig++-dev \
+    libgc-dev \
+    unifdef \
+    libffi-dev \
+    libboost-iostreams-dev \
+    libboost-graph-dev \
+    llvm \
+    pkg-config \
+    flex libfl-dev \
+    zlib1g-dev \
+    iproute2 \
+    net-tools \
+    iputils-arping \
+    iputils-ping \
+    iputils-tracepath \
+    python \
+    bison \
+    python3-setuptools \
+    python3-pip \
+    python3-wheel \
+    python3-cffi \
+    libedit-dev \
+    libgmp-dev \
+    libexpat1-dev \
+    libboost-dev \
+    google-perftools \
+    curl \
+    connect-proxy \
+    coreutils \
+    vim \
+    sudo && \
+    if [ "$BASE_IMG" = "ubuntu:18.04" ] ; then \
+       apt-get -y install python-pip; \
+    else \
+       apt-get -y install pip; \
+    fi && \
+    apt-get -y clean all
+
+# Installing all PYTHON packages
+RUN python3 -m pip install --no-cache-dir --upgrade pip && \
+    python3 -m pip install --no-cache-dir grpcio && \
+    python3 -m pip install --no-cache-dir ovspy \
+    protobuf \
+    p4runtime \
+    pyelftools \
+    scapy \
+    six \
+    cmake>=3.15.0 \
+    meson==0.59.4 \
+    ninja>=1.8.2
+
+WORKDIR /
+COPY ./root /root
+WORKDIR /root
+RUN  /root/start_p4ovs.sh /root && \
+     /root/scripts/run_cleanup.sh /root NO
+
+WORKDIR /usr/local/lib
+RUN ls | grep -v protobuf | grep -v grpc|grep -v gpr|grep -v upb|grep -v re2|grep -v address|grep -v glog | grep -v absl|xargs rm -rf
+
+WORKDIR /root
+RUN tar czf local_lib.tar.gz /usr/local/lib
+RUN rm -rf /root/p4-sde/install/lib/python*
+
+FROM ubuntu:20.04
+COPY --from=0 /root /root
+COPY --from=0 /root/local_lib.tar.gz  /
+COPY --from=0 /usr/local/sbin/ovs* /usr/local/sbin/
+COPY --from=0 /usr/local/bin/ovs* /usr/local/bin/
+COPY --from=0 /usr/local/bin/gnmi-cli /usr/local/bin/
+COPY --from=0 /usr/local/share/openvswitch/vswitch.ovsschema /usr/local/share/openvswitch/
+
+COPY --from=0 /usr/lib/x86_64-linux-gnu/libedit.so.2 /usr/lib/x86_64-linux-gnu/
+COPY --from=0 /usr/lib/x86_64-linux-gnu/libatomic.so.1 /usr/lib/x86_64-linux-gnu/
+
+COPY --from=0 /usr/share/target_sys/zlog-cfg /usr/share/target_sys/
+COPY --from=0 /usr/share/stratum/target_skip_p4_no_bsp.conf /usr/share/stratum/
+COPY --from=0 /usr/share/stratum/dpdk_port_config.pb.txt /usr/share/stratum/
+COPY --from=0 /etc/stratum/pipeline_cfg.pb.txt /etc/stratum/
+
+RUN cd / && tar xzf local_lib.tar.gz && rm -f local_lib.tar.gz && rm -f /root/local_lib.tar.gz  && \
+    apt-get update && apt-get -y --no-install-recommends install supervisor sudo libgflags-dev libunwind-dev libbsd-dev libssl-dev libnl-3-dev \ 
+    libexpat-dev python3-pip && \
+    python3 -m pip install --no-cache-dir --upgrade pip && \
+    python3 -m pip install --no-cache-dir grpcio && \
+    python3 -m pip install --no-cache-dir ovspy \
+    protobuf \
+    p4runtime \
+    six && \
+	apt-get -y install openssh-server && \
+	echo "Port 2022" >> /etc/ssh/sshd_config && \
+	echo "PermitRootLogin yes" >> /etc/ssh/sshd_config && \
+	echo "root:ipdk" | chpasswd && apt-get -y clean all && \
+    	echo "export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python" >> /root/.bashrc
+
+COPY ["root/release/supervisord.conf", "/etc/supervisor/conf.d/"]
+
+ENTRYPOINT ["/usr/bin/supervisord"]
